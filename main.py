@@ -1,18 +1,27 @@
 from flask import Flask, render_template, request, redirect, url_for, session
 import mysql.connector
+import getpass
 
 app = Flask(__name__)
 app.secret_key = "secretkey"
 
+# Ask the person running the program for their MySQL password
+mysql_password = getpass.getpass("Enter your MySQL password: ")
+
+# Connect to MySQL
 db = mysql.connector.connect(
     host="localhost",
     user="root",
-    password="password123",
-    database="login_system"
+    password=mysql_password
 )
 
 cursor = db.cursor()
 
+# Create the database if it does not already exist
+cursor.execute("CREATE DATABASE IF NOT EXISTS login_system")
+cursor.execute("USE login_system")
+
+# Create the users table if it does not already exist
 cursor.execute("""
 CREATE TABLE IF NOT EXISTS users (
     id INT AUTO_INCREMENT PRIMARY KEY,
